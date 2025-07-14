@@ -14,12 +14,14 @@ t_demand = environment.t_demand;
 
 %% Setting Utility Type
 % Util_type = 'Peaked_reward';
-Util_type = 'Logarithm_reward';
-%Util_type = 'Constant_reward';
+%Util_type = 'Logarithm_reward';
+Util_type = 'Constant_reward';
 %Util_type = 'Random';
 
 %%
 switch Util_type
+    case 'Debug'
+        util_value = t_demand(task_id)/n_participants;
     
     case 'Peaked_reward'
         % Cost
