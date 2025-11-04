@@ -33,12 +33,12 @@ for t=1:m
                 && t_location(t,2) > - a_location_limit(2) -100 && t_location(t,2) < a_location_limit(2) + 100
             ok = 0;
         else
-            ok = 1;            
+            ok = 1;
             for k=1:t-1
                 if norm(t_location(k,:) - t_location(t,:)) < Gap_task
                     ok = 0;
                 end
-            end            
+            end
         end
     end
     t_demand(t) = abs(random('Uniform',t_demand_mean*1,t_demand_mean*2));
@@ -59,9 +59,9 @@ for i=1:n
                             ok = 0;
                         end
                     end
-                    
-                end                
-            % Randomly distribute agents as a skewed circle    
+
+                end
+                % Randomly distribute agents as a skewed circle
             case 2
                 if abs(sum((a_location(i,:)))) < a_location_limit(1) % Case (2) Skewed Circle
                     ok = 1;
@@ -70,10 +70,10 @@ for i=1:n
                             ok = 0;
                         end
                     end
-                    
+
                 end
-            % Randomly distribute agents as a square
-            case 3                
+                % Randomly distribute agents as a square
+            case 3
                 ok = 1;
                 for k=1:i-1
                     if norm(a_location(k,:) - a_location(i,:)) < Gap_agent
@@ -81,7 +81,7 @@ for i=1:n
                     end
                 end
         end
-        
+
     end
 end
 
@@ -101,32 +101,34 @@ MST = MST_ - eye(n,n);
 
 
 
-environment.t_location = t_location;
-environment.t_demand = t_demand;
-environment.a_location = a_location;
 
 
-%% Initialise task allocation & Merge and Split Algorithm
-Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
+% environment.t_location = t_location;
+% environment.t_demand = t_demand;
+% environment.a_location = a_location;
 
 
-input.Alloc_existing = Alloc_existing;
-input.Flag_display = Flag_display;
-input.MST = MST;
-input.n = n;
-input.m = m;
-input.environment = environment;
-
-%%%% Method (1): All Agents are deployed at once
-[output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
-% Output : Alloc / a_utility / iteration
-
-Alloc = output.Alloc;
-a_utility = output.a_utility;
-iteration = output.iteration;
-flag_problem = output.flag_problem; % If the result has a problem, then 1. 
+% %% Initialise task allocation & Merge and Split Algorithm
+% Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
 
 
-%% Minimum-guaranteed Global Utility (Theorem 3)
-Minimum_Guaranteed_Optimality;
+% input.Alloc_existing = Alloc_existing;
+% input.Flag_display = Flag_display;
+% input.MST = MST;
+% input.n = n;
+% input.m = m;
+% input.environment = environment;
+
+% %%%% Method (1): All Agents are deployed at once
+% [output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
+% % Output : Alloc / a_utility / iteration
+
+% Alloc = output.Alloc;
+% a_utility = output.a_utility;
+% iteration = output.iteration;
+% flag_problem = output.flag_problem; % If the result has a problem, then 1.
+
+
+% %% Minimum-guaranteed Global Utility (Theorem 3)
+% Minimum_Guaranteed_Optimality;
 
