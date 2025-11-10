@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For Fig 7. Visualisation Result in GRAPE Paper 
+% For Fig 7. Visualisation Result in GRAPE Paper
 % Written & Revised By Inmo Jang, 15.Jul.2016
 % Refined, 21. Jun. 2017 / 26. Sep. 2017
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,7 +12,7 @@
 clear all;close all;clc;tic
 clock
 %% Initialisation (1) - Mode Setting
-Flag_display = 1; % 1: Show every iteration result, 0: No show. 
+Flag_display = 1; % 1: Show every iteration result, 0: No show.
 %% Initialisation (2) - TA Problem Setting
 % The number of Tasks
 m = [5];
@@ -26,7 +26,7 @@ Deployment = 1; % 1: Circle, 2: Skewed Circle, 3: Square
 %% ===============
 
 toc
-disp(['Algorithm begins @ #Agent = ',num2str(m), ' #Task = ',num2str(n)])
+disp(['Algorithm begins @ #Agent = ',num2str(n), ' #Task = ',num2str(m)])
 tic
 
 flag_problem = 0; % Just in case that Bound value does not bound
@@ -78,9 +78,9 @@ cla;
 for kk=1:n_Edge
     i = UAV_1(kk);
     j = UAV_2(kk);
-    
+
     plot([a_location(i,1) a_location(j,1)],[a_location(i,2) a_location(j,2)],'-','Color',cc_task(1,:));
-    
+
 end
 
 % Agent position + Allocation
@@ -98,10 +98,10 @@ end
 Adjust_factor = 0.5*0.15;
 for jj=1:m
     plot(t_location(jj,1),t_location(jj,2),'s','MarkerEdgeColor',cc_task(1,:),'MarkerSize',Marker_size*t_demand(jj)/1000*Adjust_factor, 'MarkerFaceColor',cc_task(jj+1,:))
-    
+
     txt = ['t',num2str(jj)];
     text(t_location(jj,1),t_location(jj,2),txt,'HorizontalAlignment','center','FontWeight','bold','Fontsize',20)
-    
+
 end
 
 if k ==final_time
@@ -137,39 +137,39 @@ for k_=1:length(time)
     Alloc_ = output.visual.Alloc_history(:,k);
     Satisfied_ = output.visual.Satisfied_history(:,k);
     cla;
-    
-    
+
+
     % Communication network
     for kk=1:n_Edge
         i = UAV_1(kk);
         j = UAV_2(kk);
-        
+
         plot([a_location(i,1) a_location(j,1)],[a_location(i,2) a_location(j,2)],'-','Color',cc_task(1,:));
-        
+
     end
-    
-    
+
+
     % Agent position + Allocation
     for j=1:n
         plot(a_location(j,1),a_location(j,2),'o','MarkerSize',Marker_size,'MarkerEdgeColor',cc_task(1,:), 'MarkerFaceColor',cc_task(Alloc_(j)+1,:))
     end
-    
-    
+
+
     % Task
     Adjust_factor = 0.5*0.15;
     for jj=1:m
         plot(t_location(jj,1),t_location(jj,2),'s','MarkerEdgeColor',cc_task(1,:),'MarkerSize',Marker_size*t_demand(jj)/1000*Adjust_factor, 'MarkerFaceColor',cc_task(jj+1,:))
-        
+
         txt = ['t',num2str(jj)];
         text(t_location(jj,1),t_location(jj,2),txt,'HorizontalAlignment','center','FontWeight','bold','Fontsize',20)
-        
+
     end
-    
-    
+
+
     % Iterations
     txt = ['# Iterations = ',num2str(output.visual.iteration_history(k))];
     text(500,500,txt,'HorizontalAlignment','right','Fontsize',13)
-    
+
     % For GIF
     if k_==1
         f = getframe;
@@ -179,7 +179,7 @@ for k_=1:length(time)
         f = getframe;
         im(:,:,1,k_) = rgb2ind(f.cdata,map,'nodither');
     end
-    
+
 end
 imwrite(im,map,'Result_TA.gif','DelayTime',0,'LoopCount',inf) %g443800
 

@@ -99,36 +99,86 @@ MST_ = (dist_agents <= Comm_distance);
 MST = MST_ - eye(n,n);
 % Note: MST will be used in Task_Allocation.m (Task_Allocation_SC_visual.m) to simulate communications between agents
 
+%% Phase 1 Grouping : Leader-follower grouping based on MST
+
+% 1) 각 agent의 연결 수(degree) 계산
+deg_agents = sum(MST, 2);    % size: [n x 1] -> 2번째 차원(열벡터)의 합을 구하라는 뜻 -> 총합은 degree
+
+% 2) degree가 큰 순서대로 정렬
+%%degree 동일하면 index 작은게 먼저 오도록(sort 기본값)
+[deg_sorted, idx_sorted] = sort(deg_agents, 'descend');
+
+% 3) leader : follower = 1 : 3 비율로 개수 결정
+%    n = num of agents
+num_leaders = floor(n / 4);   % 이상적이면 n = 4k -> k명이 leader
+if num_leaders < 1
+    num_leaders = 1;          % 최소 1명은 leader
+end
+
+leaders  = idx_sorted(1:num_leaders);
+followers = idx_sorted(num_leaders+1:end);  % 나머지 전부 follower
+
+% 논리 벡터로 저장해 두면 이후에 쓰기 편함
+isLeader   = false(n,1);
+isFollower = false(n,1);
+isLeader(leaders)     = true;
+isFollower(followers) = true;
+
+%% ===== 확인용 출력 =====
+fprintf('===== Leader / Follower grouping result =====\n');
+fprintf('Total agents: %d\n', n);
+fprintf('Num leaders : %d\n', num_leaders);
+fprintf('Num followers: %d\n', numel(followers));
+fprintf('\n');
+
+%index 출력; 높은 degree 순서대로, degree 동일할 경우 index 작은 순서대로
+fprintf('Index of Leaders   = (%s)\n', join(string(leaders), ', '));
+fprintf('Index of Followers = (%s)\n', join(string(followers), ', '));
+fprintf('\n');
+
+%%확인2: agent 별 degree 출력
+% fprintf('Leaders (index, degree):\n');
+% for k = 1:num_leaders
+%     i = leaders(k);
+%     fprintf('  agent %d  | degree = %d\n', i, deg_agents(i));
+% end
+% fprintf('\n');
+
+% fprintf('Followers (index, degree):\n');
+% for k = 1:numel(followers)
+%     i = followers(k);
+%     fprintf('  agent %d  | degree = %d\n', i, deg_agents(i));
+% end
+% fprintf('=============================================\n');
 
 
 
-
-% environment.t_location = t_location;
-% environment.t_demand = t_demand;
-% environment.a_location = a_location;
-
-
-% %% Initialise task allocation & Merge and Split Algorithm
-% Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
+environment.t_location = t_location;
+environment.t_demand = t_demand;
+environment.a_location = a_location;
 
 
-% input.Alloc_existing = Alloc_existing;
-% input.Flag_display = Flag_display;
-% input.MST = MST;
-% input.n = n;
-% input.m = m;
-% input.environment = environment;
-
-% %%%% Method (1): All Agents are deployed at once
-% [output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
-% % Output : Alloc / a_utility / iteration
-
-% Alloc = output.Alloc;
-% a_utility = output.a_utility;
-% iteration = output.iteration;
-% flag_problem = output.flag_problem; % If the result has a problem, then 1.
+%% Initialise task allocation & Merge and Split Algorithm
+Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
 
 
-% %% Minimum-guaranteed Global Utility (Theorem 3)
-% Minimum_Guaranteed_Optimality;
+input.Alloc_existing = Alloc_existing;
+input.Flag_display = Flag_display;
+input.MST = MST;
+input.n = n;
+input.m = m;
+input.environment = environment;
+
+%%%% Method (1): All Agents are deployed at once
+[output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
+% Output : Alloc / a_utility / iteration
+
+Alloc = output.Alloc;
+a_utility = output.a_utility;
+iteration = output.iteration;
+flag_problem = output.flag_problem; % If the result has a problem, then 1.
+
+
+%% Minimum-guaranteed Global Utility (Theorem 3)
+Minimum_Guaranteed_Optimality;
 
