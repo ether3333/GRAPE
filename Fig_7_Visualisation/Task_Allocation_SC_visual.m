@@ -179,7 +179,7 @@ while a_satisfied~=n
 
     if Flag_display == 1
         if mod(iteration,10) == 0
-            disp(['Iteration = ',num2str(iteration)])
+            % disp(['Iteration = ',num2str(iteration)])
         end
     end
 

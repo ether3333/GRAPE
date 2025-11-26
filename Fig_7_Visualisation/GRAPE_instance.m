@@ -151,34 +151,34 @@ fprintf('\n');
 % end
 % fprintf('=============================================\n');
 
+%%%%주석 처리하라고 하셨던 부분(이 이후로 주석 처리)%%%%
 
-
-% environment.t_location = t_location;
-% environment.t_demand = t_demand;
-% environment.a_location = a_location;
-
-
-% %% Initialise task allocation & Merge and Split Algorithm
-% Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
-
-
-% input.Alloc_existing = Alloc_existing;
-% input.Flag_display = Flag_display;
-% input.MST = MST;
-% input.n = n;
-% input.m = m;
-% input.environment = environment;
-
-% %%%% Method (1): All Agents are deployed at once
-% [output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
-% % Output : Alloc / a_utility / iteration
-
-% Alloc = output.Alloc;
-% a_utility = output.a_utility;
-% iteration = output.iteration;
-% flag_problem = output.flag_problem; % If the result has a problem, then 1.
-
-
-% %% Minimum-guaranteed Global Utility (Theorem 3)
-% Minimum_Guaranteed_Optimality;
+environment.t_location = t_location;
+environment.t_demand = t_demand;
+environment.a_location = a_location;
+%
+%
+%% Initialise task allocation & Merge and Split Algorithm
+Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
+%
+%
+input.Alloc_existing = Alloc_existing;
+input.Flag_display = Flag_display;
+input.MST = MST;
+input.n = n;
+input.m = m;
+input.environment = environment;
+%
+%%%% Method (1): All Agents are deployed at once
+[output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
+% Output : Alloc / a_utility / iteration
+%
+Alloc = output.Alloc;
+a_utility = output.a_utility;
+iteration = output.iteration;
+flag_problem = output.flag_problem; % If the result has a problem, then 1.
+%
+%
+%% Minimum-guaranteed Global Utility (Theorem 3)
+Minimum_Guaranteed_Optimality;
 
