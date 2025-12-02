@@ -118,6 +118,7 @@ deg_agents = sum(MST, 2);    % 각 행의 합 = degree (이웃 수)
 %    (i) 모든 follower가 최소 한 명의 leader와 1-hop 이웃,
 %    (ii) follower-to-leader 비가 K 이하.
 
+%[3]  GPI condition 2개가 만족될 때까지 leader 선택 반복
 while true
     numL = numel(L); %Leader 수
     numF = numel(F); %Follower 수
@@ -154,10 +155,11 @@ while true
         end
     end
 
-    % 더 이상 isempty(cand)로 break 하지 않는다.
+    % 더 이상 isempty(cand)로 break 하지 않는다. %%%% 뭔말인지 모르겠슨데 일단 살려둠 %%%%!!!!
     [~, idx_max] = max(deg_agents(cand));
     new_leader = cand(idx_max);
 
+    %[5] 새 leader 추가 후 follower 집합에서 제거
     L = [L; new_leader];
     F(F == new_leader) = [];
 
@@ -173,37 +175,38 @@ isFollower = false(n,1);
 isLeader(leaders)     = true;
 isFollower(followers) = true;
 
-%% 3) Followers -> Leaders 그룹 배정 (최소 group_size 리더 선택)
+%% [7~11] Followers -> Leaders 그룹 배정 (최소 group_size 리더 선택)
 
+%[7] 각 group 정보 초기화
 num_leaders        = numel(leaders);
 group_size         = zeros(num_leaders,1);   % 각 리더 밑 follower 수
 follower_to_leader = zeros(n,1);            % f 가 어느 리더(leaders(k))에 붙었는지
 groups             = cell(num_leaders,1);   % groups{k} = leaders(k) 밑 follower 리스트
 
+%[8] 각 follower 에 대해
 for f = followers
-    % 이 follower f와 MST로 연결된 leader들만 후보
+    %[9]-1)min distance =1 ; 이 follower f와 MST로 연결된 leader들만 후보
     cand_idx = find(MST(f, leaders) > 0);   % leaders 중 edge가 있는 리더들의 서브 인덱스
 
-    if isempty(cand_idx)
-        % 이론적으로 GPI 조건이 만족된 뒤라면 여기 안 들어와야 함
-        % (즉, follower는 항상 적어도 한 leader와 1-hop이어야 함)
+    if isempty(cand_idx) %Alg 1에 없는 내용; gpi 조건 안 맞는 경우의 처리
+        % follower는 항상 적어도 한 leader와 1-hop이어야 함
         continue;
     end
 
-    % 후보 리더들 중 현재 group_size가 최소인 리더 선택 (load balancing)
+    %[9]-2) Arg min = k; 후보 리더들 중 현재 group_size가 최소인 리더 선택 (load balancing)
     [~, pos] = min(group_size(cand_idx));
     k = cand_idx(pos);                      % leaders(k)가 실제 리더 번호
 
-    % 그룹에 follower 추가
+    % [10] 그룹에 follower 추가
     group_size(k)         = group_size(k) + 1;
     follower_to_leader(f) = leaders(k);
     groups{k}             = [groups{k}, f];
 end
 
-% (이론상 비어 있어야 하는) 미배정 follower 확인
+%% (이론상 비어 있어야 하는) Unassigned follower 확인
 unassigned_followers = followers(follower_to_leader(followers) == 0);
 
-%% 4) 확인용 출력
+%% 확인용 출력
 
 fprintf('===== Leader / Follower grouping result (GPI) =====\n');
 fprintf('Total agents: %d\n', n);
@@ -230,14 +233,6 @@ if ~isempty(unassigned_followers)
         join(string(unassigned_followers), ', '));
 end
 fprintf('=============================================\n\n');
-
-%% ===== 확인용 출력 =====
-fprintf('===== Leader / Follower grouping result =====\n');
-fprintf('Total agents: %d\n', n);
-fprintf('Num leaders : %d\n', num_leaders);
-fprintf('Num leaders : %d\n', numel(leaders));
-fprintf('Num followers: %d\n', numel(followers));
-fprintf('\n');
 
 %index 출력; 높은 degree 순서대로, degree 동일할 경우 index 작은 순서대로
 fprintf('Index of Leaders   = (%s)\n', join(string(leaders), ', '));
