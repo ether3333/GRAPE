@@ -132,7 +132,7 @@ while true
     end
 
     % (ii) follower-to-leader 비 계산
-    if (numL > 0) && all_covered && (numF / numL <= K)
+    if (numL > 0) && all_covered && (numF / numL <= K) 
         % numL > 0 이라서 0으로 나누는 경우는 없음
         break;
     end
@@ -259,7 +259,6 @@ fprintf('\n');
 % end
 % fprintf('=============================================\n');
 
-%%%%MODIFIED PART ENDS HERE%%%%
 %%%%주석 처리하라고 하셨던 부분 － 없으니까 안 돌아가서 복원함%%%%
 
 environment.t_location = t_location;

@@ -47,67 +47,67 @@ end
 
 dummy = 1;
 
-%% Output Result (1): Final status
-close all
-fig = figure('position', [650, 10, 400, 350]);hold on;
-grid on;daspect([1 1 1]);axis square
-axis([-t_location_limit(1) t_location_limit(1) -t_location_limit(2) t_location_limit(2)]*1.1)
-axis square
-grid on;
-UAV_ID = cellstr(num2str([1:n]'));
-[UAV_1,UAV_2] = find(triu(MST)>0);
-n_Edge = length(UAV_1);
+%% Output Result (1): Final status /// Matlab 매번 실행되는 것 막기 위해 주석 처리(25.11.29)
+% close all
+% fig = figure('position', [650, 10, 400, 350]);hold on;
+% grid on;daspect([1 1 1]);axis square
+% axis([-t_location_limit(1) t_location_limit(1) -t_location_limit(2) t_location_limit(2)]*1.1)
+% axis square
+% grid on;
+% UAV_ID = cellstr(num2str([1:n]'));
+% [UAV_1,UAV_2] = find(triu(MST)>0);
+% n_Edge = length(UAV_1);
 
-dx = 4; dy = 1;
-text(a_location(:,1)+dx,a_location(:,2)+dy,UAV_ID);
-xlabel('X-axis (m)')
-ylabel('Y-axis (m)')
-
-
-cc_task = jet(m);
-cc_task = [[0.4 0.4 0.4 ];cc_task];
-final_time = size(output.visual.Satisfied_history,2);
-Marker_size = 4.5;
-
-k = final_time;
-
-Alloc_ = output.visual.Alloc_history(:,k);
-Satisfied_ = output.visual.Satisfied_history(:,k);
-cla;
-
-for kk=1:n_Edge
-    i = UAV_1(kk);
-    j = UAV_2(kk);
-
-    plot([a_location(i,1) a_location(j,1)],[a_location(i,2) a_location(j,2)],'-','Color',cc_task(1,:));
-
-end
-
-% Agent position + Allocation
-for j=1:n
-    if Satisfied_(j)==0
-        plot(a_location(j,1),a_location(j,2),'o','MarkerSize',Marker_size,'MarkerEdgeColor',cc_task(1,:),'MarkerFaceColor',cc_task(1,:))
-    else
-        plot(a_location(j,1),a_location(j,2),'o','MarkerSize',Marker_size,'MarkerEdgeColor',cc_task(1,:), 'MarkerFaceColor',cc_task(Alloc_(j)+1,:))
-    end
-    %plot(agent(j).x_result(1,k),agent(j).x_result(2,k),'o','Color',cc(j,:),'linewidth',1.5,'MarkerFaceColor',cc(j,:),'MarkerSize',Marker_size);
-end
+% dx = 4; dy = 1;
+% text(a_location(:,1)+dx,a_location(:,2)+dy,UAV_ID);
+% xlabel('X-axis (m)')
+% ylabel('Y-axis (m)')
 
 
-% Task
-Adjust_factor = 0.5*0.15;
-for jj=1:m
-    plot(t_location(jj,1),t_location(jj,2),'s','MarkerEdgeColor',cc_task(1,:),'MarkerSize',Marker_size*t_demand(jj)/1000*Adjust_factor, 'MarkerFaceColor',cc_task(jj+1,:))
+% cc_task = jet(m);
+% cc_task = [[0.4 0.4 0.4 ];cc_task];
+% final_time = size(output.visual.Satisfied_history,2);
+% Marker_size = 4.5;
 
-    txt = ['t',num2str(jj)];
-    text(t_location(jj,1),t_location(jj,2),txt,'HorizontalAlignment','center','FontWeight','bold','Fontsize',20)
+% k = final_time;
 
-end
+% Alloc_ = output.visual.Alloc_history(:,k);
+% Satisfied_ = output.visual.Satisfied_history(:,k);
+% cla;
 
-if k ==final_time
-    filename = 'result_vis_';
-    print(fig,filename,'-depsc','-r500');
-end
+% for kk=1:n_Edge
+%     i = UAV_1(kk);
+%     j = UAV_2(kk);
+
+%     plot([a_location(i,1) a_location(j,1)],[a_location(i,2) a_location(j,2)],'-','Color',cc_task(1,:));
+
+% end
+
+% % Agent position + Allocation
+% for j=1:n
+%     if Satisfied_(j)==0
+%         plot(a_location(j,1),a_location(j,2),'o','MarkerSize',Marker_size,'MarkerEdgeColor',cc_task(1,:),'MarkerFaceColor',cc_task(1,:))
+%     else
+%         plot(a_location(j,1),a_location(j,2),'o','MarkerSize',Marker_size,'MarkerEdgeColor',cc_task(1,:), 'MarkerFaceColor',cc_task(Alloc_(j)+1,:))
+%     end
+%     %plot(agent(j).x_result(1,k),agent(j).x_result(2,k),'o','Color',cc(j,:),'linewidth',1.5,'MarkerFaceColor',cc(j,:),'MarkerSize',Marker_size);
+% end
+
+
+% % Task
+% Adjust_factor = 0.5*0.15;
+% for jj=1:m
+%     plot(t_location(jj,1),t_location(jj,2),'s','MarkerEdgeColor',cc_task(1,:),'MarkerSize',Marker_size*t_demand(jj)/1000*Adjust_factor, 'MarkerFaceColor',cc_task(jj+1,:))
+
+%     txt = ['t',num2str(jj)];
+%     text(t_location(jj,1),t_location(jj,2),txt,'HorizontalAlignment','center','FontWeight','bold','Fontsize',20)
+
+% end
+
+% if k ==final_time
+%     filename = 'result_vis_';
+%     print(fig,filename,'-depsc','-r500');
+% end
 
 
 %% Output Result (2): Animation from time 0 to final converged time
