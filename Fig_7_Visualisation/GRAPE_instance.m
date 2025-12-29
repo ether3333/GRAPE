@@ -99,7 +99,7 @@ MST_ = (dist_agents <= Comm_distance);
 MST = MST_ - eye(n,n);
 % Note: MST will be used in Task_Allocation.m (Task_Allocation_SC_visual.m) to simulate communications between agents
 
-%%%%MODIFIED PART STARTS HERE%%%%
+%%%% MODIFIED PART STARTS HERE %%%%
 %% Phase 1 Grouping : Leader-follower grouping based on paper (Modifed 26.Nov.2025)
 
 %  - K   : 최대 follower-to-leader 비 (논문에서 사용하는 K, 예: 3)
@@ -207,7 +207,6 @@ end
 unassigned_followers = followers(follower_to_leader(followers) == 0);
 
 %% 확인용 출력
-
 fprintf('===== Leader / Follower grouping result (GPI) =====\n');
 fprintf('Total agents: %d\n', n);
 fprintf('Num leaders : %d\n', numel(leaders));
