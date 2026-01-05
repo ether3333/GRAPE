@@ -155,7 +155,7 @@ while true
         end
     end
 
-    % 더 이상 isempty(cand)로 break 하지 않는다. %%%% 뭔말인지 모르겠슨데 일단 살려둠 %%%%!!!!
+    % 더 이상 isempty(cand)로 break 하지 않는다. 후보들 중에 degree 최대인 애 선택해 새 leader 로
     [~, idx_max] = max(deg_agents(cand));
     new_leader = cand(idx_max);
 
