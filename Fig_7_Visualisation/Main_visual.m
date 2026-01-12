@@ -19,6 +19,7 @@ m = [5];
 % % The number of Agents
 n = [2^6*m];
 
+%% 방법2: Agent Distribution 바꾸기
 Deployment = 1; % 1: Circle, 2: Skewed Circle, 3: Square
 
 %% Below is not needed to change
