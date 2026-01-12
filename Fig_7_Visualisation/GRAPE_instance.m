@@ -44,6 +44,7 @@ for t=1:m
     t_demand(t) = abs(random('Uniform',t_demand_mean*1,t_demand_mean*2));
 end
 
+%% MST 수정 2 : Agent 분포 방식 변경
 % Generation of Agent information
 for i=1:n
     ok = 0;
@@ -254,8 +255,6 @@ fprintf('\n');
 % fprintf('=============================================\n');
 
 %%%%MODIFIED PART ENDS HERE%%%%
-%%%%주석 처리하라고 하셨던 부분 － 없으니까 안 돌아가서 복원함%%%%
-
 environment.t_location = t_location;
 environment.t_demand = t_demand;
 environment.a_location = a_location;
