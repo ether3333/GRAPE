@@ -19,7 +19,8 @@ t_location = zeros(m,2);    % task location - 2D
 a_location = zeros(n,2);    % agent location - 2D
 t_demand = zeros(m,1);      % task rewards
 
-Comm_distance = 50;         % Communication range of each robot
+%% MST 수정 1 : Agent Communication Range 조정
+Comm_distance = 300;         % Communication range of each robot
 Gap_agent = 15;             % Minimum spatial distance between any two robots
 Gap_task = 200;             % Minimum spatial distance between any two tasks
 
@@ -44,7 +45,7 @@ for t=1:m
     t_demand(t) = abs(random('Uniform',t_demand_mean*1,t_demand_mean*2));
 end
 
-%% MST 수정 2 : Agent 분포 방식 변경
+%% MST 수정 2 : Agent 분포 방식 변경（여기서는 손댄 것 없음 － Main_visual.m에서 설정）
 % Generation of Agent information
 for i=1:n
     ok = 0;
@@ -105,7 +106,7 @@ MST = MST_ - eye(n,n);
 
 %  - K   : 최대 follower-to-leader 비 (논문에서 사용하는 K, 예: 3)
 
-K = 3;    % 필요하면 바꿔서 실험
+K = 7;    % 필요하면 바꿔서 실험
 
 %[1] Initialize L and F
 L = [];             % leaders 집합 (agent index)
