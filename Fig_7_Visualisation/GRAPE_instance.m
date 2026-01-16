@@ -256,30 +256,171 @@ fprintf('\n');
 % fprintf('=============================================\n');
 
 %%%%MODIFIED PART ENDS HERE%%%%
-environment.t_location = t_location;
-environment.t_demand = t_demand;
-environment.a_location = a_location;
+% environment.t_location = t_location;
+% environment.t_demand = t_demand;
+% environment.a_location = a_location;
 %
 %
 %% Initialise task allocation & Merge and Split Algorithm
-Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
+
+%% =======================
+%% Phase 1) Task Grouping (random, group size 비례)
+%% =======================
+rng(0);  % 재현성 필요 없으면 삭제
+
+numL = numel(leaders);     % leaders: 1 x numL (또는 numL x 1)
+leaders = leaders(:);      % column으로 통일
+
+% 각 leader-group의 agent 수 = leader 1명 + follower 수
+group_member_cnt = zeros(numL,1);
+for k = 1:numL
+    group_member_cnt(k) = 1 + numel(groups{k});
+end
+
+% m개 task를 group_member_cnt 비율로 나눔
+w = group_member_cnt / sum(group_member_cnt);
+mk_float = w * m;
+mk = floor(mk_float);
+rem = m - sum(mk);
+
+% 나머지는 소수점 큰 순서로 분배
+[~, order] = sort(mk_float - mk, 'descend');
+mk(order(1:rem)) = mk(order(1:rem)) + 1;
+
+% task index 랜덤 셔플 후, mk만큼 잘라서 그룹 생성
+perm_tasks = randperm(m);
+task_groups = cell(numL,1);
+idx = 1;
+for k = 1:numL
+    task_groups{k} = perm_tasks(idx : idx + mk(k) - 1);
+    idx = idx + mk(k);
+end
+
+%% =======================
+%% Phase 2) Task 그룹을 Leader에게 random 할당
+%% =======================
+perm_bundle = randperm(numL);
+leader_tasks = cell(numL,1);      % leader_tasks{k}: leaders(k)가 맡을 task index들(전역)
+for k = 1:numL
+    leader_tasks{k} = task_groups{perm_bundle(k)};
+end
+
+%% =======================
+%% Debug/Log) Task grouping & assignment 확인
+%% =======================
+
+fprintf('\n===== Task Grouping (task_groups) =====\n');
+fprintf('m = %d, numL = %d\n', m, numL);
+fprintf('mk (tasks per group, before leader mapping) = ');
+fprintf('%d ', mk);
+fprintf('\n\n');
+
+for k = 1:numL
+    tg = task_groups{k};
+    fprintf('Group %d | tasks(%d) = (', k, numel(tg));
+    if ~isempty(tg)
+        fprintf('%s', strtrim(sprintf('%d ', tg)));
+    end
+    fprintf(')\n');
+end
+
+fprintf('===== Task -> Leader assignment (leader_tasks) =====\n');
+
+task_to_leader = zeros(m,1);   % task t가 배정된 leader index (없으면 0)
+for k = 1:numL
+    tk = leader_tasks{k};
+    if ~isempty(tk)
+        task_to_leader(tk) = leaders(k);
+    end
+end
+
+for k = 1:numL
+    tk = leader_tasks{k};
+    fprintf('Leader %d | tasks(%d) = (', leaders(k), numel(tk));
+    if ~isempty(tk)
+        fprintf('%s', strtrim(sprintf('%d ', tk)));
+    end
+    fprintf(')\n');
+end
+
+fprintf('----- Per-task summary -----\n');
+for t = 1:m
+    fprintf('Task %d -> Leader %d\n', t, task_to_leader(t));
+end
+fprintf('=======================================\n\n');
+
+
+%% =======================
+%% Phase 2-2) Group-wise Task Allocation
+%% (Task_Allocation_SC_visual을 그룹별로 여러 번 호출)
+%% =======================
+Alloc = zeros(n,1);
+a_utility = zeros(n,1);
+iteration = zeros(numL,1);
+flag_problem = zeros(numL,1);
+
+for k = 1:numL
+    members = [leaders(k); groups{k}(:)];  % 전역 agent index
+    tasks_k = leader_tasks{k}(:);          % 전역 task index
+
+    if isempty(tasks_k)  % 이 그룹에 배정된 task가 0개면 스킵
+        Alloc(members) = 0;
+        a_utility(members) = 0;
+        iteration(k) = 0;
+        flag_problem(k) = 0;
+        continue;
+    end
+
+    nk = numel(members);
+    mk_local = numel(tasks_k);
+
+    % 부분 환경 구성 (agent/ task subset)
+    env_k.a_location = a_location(members,:);
+    env_k.t_location = t_location(tasks_k,:);
+    env_k.t_demand   = t_demand(tasks_k);
+
+    % 부분 입력 구성
+    input_k.Alloc_existing = zeros(nk,1);
+    input_k.Flag_display = Flag_display;
+    input_k.n = nk;
+    input_k.m = mk_local;
+    input_k.environment = env_k;
+
+    % 그룹 내부 통신: fully connected (현재 Comm_distance=300의 의도와 동일)
+    input_k.MST = ones(nk,nk) - eye(nk);
+
+    out_k = Task_Allocation_SC_visual(input_k);
+
+    % out_k.Alloc은 1..mk_local(부분 task index)
+    alloc_local = out_k.Alloc;          % nk x 1
+    alloc_global = zeros(nk,1);
+    mask = (alloc_local > 0);
+    alloc_global(mask) = tasks_k(alloc_local(mask));  % 전역 task index로 매핑
+
+    Alloc(members) = alloc_global;
+    a_utility(members) = out_k.a_utility;
+    iteration(k) = out_k.iteration;
+    flag_problem(k) = out_k.flag_problem;
+end
+
+% Alloc_existing = zeros(n,1);    % Initial task assignment: every robot is assigned to void task
 %
 %
-input.Alloc_existing = Alloc_existing;
-input.Flag_display = Flag_display;
-input.MST = MST;
-input.n = n;
-input.m = m;
-input.environment = environment;
-%
-%%%% Method (1): All Agents are deployed at once
-[output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
-% Output : Alloc / a_utility / iteration
-%
-Alloc = output.Alloc;
-a_utility = output.a_utility;
-iteration = output.iteration;
-flag_problem = output.flag_problem; % If the result has a problem, then 1.
+% input.Alloc_existing = Alloc_existing;
+% input.Flag_display = Flag_display;
+% input.MST = MST;
+% input.n = n;
+% input.m = m;
+% input.environment = environment;
+% %
+% %%%% Method (1): All Agents are deployed at once
+% [output] = Task_Allocation_SC_visual(input); % Consiering Strongly-connected environment
+% % Output : Alloc / a_utility / iteration
+% %
+% Alloc = output.Alloc;
+% a_utility = output.a_utility;
+% iteration = output.iteration;
+% flag_problem = output.flag_problem; % If the result has a problem, then 1.
 %
 %
 %% Minimum-guaranteed Global Utility (Theorem 3)

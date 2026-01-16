@@ -15,9 +15,9 @@ clock
 Flag_display = 1; % 1: Show every iteration result, 0: No show.
 %% Initialisation (2) - TA Problem Setting
 % The number of Tasks
-m = [5];
+m = [160];
 % % The number of Agents
-n = [2^6*m];
+n = [12*m];
 
 %% 방법2: Agent Distribution 바꾸기
 Deployment = 1; % 1: Circle, 2: Skewed Circle, 3: Square
