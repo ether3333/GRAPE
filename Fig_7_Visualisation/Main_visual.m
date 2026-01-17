@@ -15,7 +15,7 @@ clock
 Flag_display = 1; % 1: Show every iteration result, 0: No show.
 %% Initialisation (2) - TA Problem Setting
 % The number of Tasks
-m = [160];
+m = [80];
 % % The number of Agents
 n = [12*m];
 

@@ -8,8 +8,8 @@
 %% Initialisation (1) - Generation of Random Scenario
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Tasks/Agents Location
-t_location_limit = [500 500]; % Task locations range: max(X) max(Y) (metre)
-a_location_limit = [300 300]; % Agent locations range: max(X) & max(Y) (metre)
+t_location_limit = [9500 9500]; % Task locations range: max(X) max(Y) (metre)
+a_location_limit = [9300 9300]; % Agent locations range: max(X) & max(Y) (metre)
 
 % Task Demand or Reward
 t_demand_mean = 1000*n/m; % 15.(Jul.2016) In order to maintain the level of individual utilities regardless of #Tasks or #Agents
@@ -20,7 +20,7 @@ a_location = zeros(n,2);    % agent location - 2D
 t_demand = zeros(m,1);      % task rewards
 
 %% MST 수정 1 : Agent Communication Range 조정
-Comm_distance = 300;         % Communication range of each robot
+Comm_distance = 9300;         % Communication range of each robot
 Gap_agent = 15;             % Minimum spatial distance between any two robots
 Gap_task = 200;             % Minimum spatial distance between any two tasks
 
@@ -102,11 +102,11 @@ MST = MST_ - eye(n,n);
 % Note: MST will be used in Task_Allocation.m (Task_Allocation_SC_visual.m) to simulate communications between agents
 
 %%%% MODIFIED PART STARTS HERE %%%%
-%% Phase 1 Grouping : Leader-follower grouping based on paper (Modifed 26.Nov.2025)
+%% Phase 1 Grouping : Leader-follower grouping based on paper (Modifed 17.Jan.2026)
 
 %  - K   : 최대 follower-to-leader 비 (논문에서 사용하는 K, 예: 3)
 
-K = 7;    % 필요하면 바꿔서 실험
+K = 12;    % 필요하면 바꿔서 실험 - 11 이상부터 모든 leader에 task가 할당됨
 
 %[1] Initialize L and F
 L = [];             % leaders 집합 (agent index)
@@ -256,9 +256,7 @@ fprintf('\n');
 % fprintf('=============================================\n');
 
 %%%%MODIFIED PART ENDS HERE%%%%
-% environment.t_location = t_location;
-% environment.t_demand = t_demand;
-% environment.a_location = a_location;
+
 %
 %
 %% Initialise task allocation & Merge and Split Algorithm
@@ -422,6 +420,9 @@ end
 % iteration = output.iteration;
 % flag_problem = output.flag_problem; % If the result has a problem, then 1.
 %
+environment.t_location = t_location;
+environment.t_demand = t_demand;
+environment.a_location = a_location;
 %
 %% Minimum-guaranteed Global Utility (Theorem 3)
 Minimum_Guaranteed_Optimality;
