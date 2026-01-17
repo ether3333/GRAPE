@@ -255,10 +255,13 @@ fprintf('\n');
 % end
 % fprintf('=============================================\n');
 
-%%%%MODIFIED PART ENDS HERE%%%%
+%%%%Task 1 Grouping : MODIFIED PART ENDS HERE%%%%
 
 %
 %
+
+%%%%Task 2 Task Allocation : MODIFIED PART STARTS HERE%%%%
+
 %% Initialise task allocation & Merge and Split Algorithm
 
 %% =======================
@@ -269,23 +272,23 @@ rng(0);  % 재현성 필요 없으면 삭제
 numL = numel(leaders);     % leaders: 1 x numL (또는 numL x 1)
 leaders = leaders(:);      % column으로 통일
 
-% 각 leader-group의 agent 수 = leader 1명 + follower 수
+% 각 leader-group의 agent 수(g_k) = leader 1명 + follower 수
 group_member_cnt = zeros(numL,1);
 for k = 1:numL
     group_member_cnt(k) = 1 + numel(groups{k});
 end
 
-% m개 task를 group_member_cnt 비율로 나눔
+% m개 task를 group_member_cnt 비율로 나눔 (T/L)
 w = group_member_cnt / sum(group_member_cnt);
 mk_float = w * m;
 mk = floor(mk_float);
 rem = m - sum(mk);
 
-% 나머지는 소수점 큰 순서로 분배
+% 나머지는 소수점 큰 순서로 분배 (논문에 없지만 추가한 규칙)
 [~, order] = sort(mk_float - mk, 'descend');
 mk(order(1:rem)) = mk(order(1:rem)) + 1;
 
-% task index 랜덤 셔플 후, mk만큼 잘라서 그룹 생성
+% task index 랜덤 셔플 후, mk만큼 잘라서 그룹 생성 (random task groups)
 perm_tasks = randperm(m);
 task_groups = cell(numL,1);
 idx = 1;
@@ -297,8 +300,8 @@ end
 %% =======================
 %% Phase 2) Task 그룹을 Leader에게 random 할당
 %% =======================
-perm_bundle = randperm(numL);
-leader_tasks = cell(numL,1);      % leader_tasks{k}: leaders(k)가 맡을 task index들(전역)
+perm_bundle = randperm(numL); % random indice of leaders
+leader_tasks = cell(numL,1);      % leader_tasks{k}: leaders(k)가 맡을 task의 indice - random하게 할당됨
 for k = 1:numL
     leader_tasks{k} = task_groups{perm_bundle(k)};
 end
