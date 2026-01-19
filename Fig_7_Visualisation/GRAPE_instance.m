@@ -106,7 +106,7 @@ MST = MST_ - eye(n,n);
 
 %  - K   : 최대 follower-to-leader 비 (논문에서 사용하는 K, 예: 3)
 
-K = 11;    % 필요하면 바꿔서 실험 - 11 이상부터 모든 leader에 task가 할당됨
+K = 40;    % 필요하면 바꿔서 실험 - 11 이상부터 모든 leader에 task가 할당됨 %%modif_K
 
 %[1] Initialize L and F
 L = [];             % leaders 집합 (agent index)
@@ -428,9 +428,9 @@ environment.t_demand = t_demand;
 environment.a_location = a_location;
 
 %% =======================
-%% Debug) Per-task assigned agents (global indices)
-%% (put this right after the group-wise allocation loop ends)
+%% Debug)
 %% =======================
+% Per-task assigned agents
 fprintf('\n===== Per-task assigned agents (global) =====\n');
 fprintf('[check] #void = %d\n', sum(Alloc == 0));
 
@@ -443,7 +443,11 @@ for t = 1:m
     fprintf(')\n');
 end
 fprintf('============================================\n\n');
-
+% agent per task
+fprintf('===== Per-agent assigned task =====\n');
+for i = 1:n
+    fprintf('Agent %d -> Task %d\n', i, Alloc(i));
+end
 %
 %% Minimum-guaranteed Global Utility (Theorem 3)
 Minimum_Guaranteed_Optimality;
